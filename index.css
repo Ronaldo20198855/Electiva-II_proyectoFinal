@@ -1,0 +1,68 @@
+
+.semaforo{
+    max-width: 500px;
+    max-height: 900px;
+    height: 70vh;
+    width: 26vh;
+    margin: 10px auto;
+    background-color: rgb(74, 75, 77);
+    box-sizing: border-box;
+    border-style: solid;
+    border-width: 10px;
+    border-color: rgb(184, 184, 184);  
+}
+
+.amarilla1{
+    margin-top: 5px;
+    border-radius: 50%;
+    height: 24%;
+    width: auto;
+    background-color: rgb(55, 59, 0);
+}
+.luzRoja{
+    margin-top: 5px;
+    border-radius: 50%;
+    height: 24%;
+    width: auto;
+    background-color: rgb(51, 8, 8);
+}
+.luzAmarilla{
+    margin-top: 5px;
+    border-radius: 50%;
+    height: 24%;
+    width: auto;
+    background-color: rgb(55, 59, 0);
+}
+.luzVerde{
+    margin-top: 5px;
+    margin-bottom: 5px;
+    border-radius: 50%;
+    height: 24%;
+    width: auto;
+    background-color: rgb(0, 31, 9);
+}
+
+.panelDeControl{
+    position: relative;
+    box-sizing: border-box;
+    height: auto;
+    width: 33vh;
+    padding: 10px;
+    margin: 0 auto;
+}
+.contador{
+    min-width: 190px;
+    width: 100%;
+    height: auto;
+    font-size: 60px;
+    margin-bottom: 10px;
+    text-align: center;
+}
+button{
+    min-width: 90px;
+    height: 60px;
+    width: 48%;
+    font-size: 15px;
+}
+
+
