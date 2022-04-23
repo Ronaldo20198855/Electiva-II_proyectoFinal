@@ -5,23 +5,77 @@ const amarilla = document.querySelector(".luzAmarilla");
 const verde = document.querySelector(".luzVerde");
 const pasar = document.getElementById("pedirPaso");
 const cancelar = document.getElementById("cancelar"); 
+const respuesta = document.querySelector('.info')
+
+const client  = mqtt.connect('ws://test.mosquitto.org:8081/mqtt')
 
 let tiempo = 85;
 let peticion = 0;
 let retorno = 0;
-pasar.addEventListener("click",()=>{
-   
+
+
+//conexion 
+client.on('connect', function () {
+  client.subscribe('rlm6301', function (err) {
+    if (!err) {
+      client.on('message',  function (topic, message) {
+        // message is Buffer
+        //console.log(topic +"-"+ message.toString())
+        if(message.toString()=='pasar'){
+            console.log('pausa con mqtt')
+            if(tiempo<=45 && tiempo>=35){
+                peticion++;
+                retorno = tiempo;
+                tiempo = 85;
+                
+            }   
+            if(tiempo<=45 && tiempo < 35){
+                peticion--;   
+                tiempo = tiempo - 15;
+               }     
+        }
+        if(message.toString()=='cancelar'){
+            console.log('cancelar con mqtt')
+            if(peticion>0 && tiempo > 35){
+                peticion--;   
+                tiempo = retorno;
+               }
+        }
+      })
+    }
+  })
+})
+
+
+client.on('connect', function () {
+    pasar.addEventListener('click', ()=>{
+        client.publish('rlm6301', 'pasar')
+    })
+})
+client.on('connect', function () {
+    cancelar.addEventListener('click', ()=>{
+        client.publish('rlm6301', 'cancelar')
+    })
+})
+
+/*
+pasar.addEventListener("click",()=>{   
     if(tiempo<=45 && tiempo>=35){
         peticion++;
         retorno = tiempo;
         tiempo = 85;
     }
-})
+    if(tiempo<=45 && tiempo < 35){
+        peticion--;   
+        tiempo = tiempo - 15;
+       }
+})*/
 cancelar.addEventListener("click",()=>{
-    if(peticion>1 && tiempo > 35){
+    if(peticion>0 && tiempo > 35){
      peticion--;   
      tiempo = retorno;
     }
+
 })
 
 const encender = {
@@ -92,7 +146,7 @@ const semaforo=()=>{
             apagar.rojo();
             apagar.amarilla1();
         }
-        if(tiempo==0){
+        if(tiempo==0 || tiempo <0){
             tiempo=85
         }
     }  
