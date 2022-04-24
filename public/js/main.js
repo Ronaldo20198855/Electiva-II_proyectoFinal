@@ -6,8 +6,12 @@ const verde = document.querySelector(".luzVerde");
 const pasar = document.getElementById("pedirPaso");
 const cancelar = document.getElementById("cancelar"); 
 const respuesta = document.querySelector('.info')
+const p_contador = document.querySelector('.peatones_contador')
 
-const client  = mqtt.connect('ws://test.mosquitto.org:8081/mqtt')
+//const client  = mqtt.connect('ws://test.mosquitto.org:8080/mqtt')
+
+const client  = mqtt.connect('ws://broker.hivemq.com:8000/mqtt')
+// hivemq puerto 8000 || 443
 
 let tiempo = 85;
 let peticion = 0;
@@ -22,23 +26,32 @@ client.on('connect', function () {
         // message is Buffer
         //console.log(topic +"-"+ message.toString())
         if(message.toString()=='pasar'){
-            console.log('pausa con mqtt')
+            //console.log('pausa con mqtt')
+            //peticion++;
+            //p_contador.innerHTML=`${peticion}`;
             if(tiempo<=45 && tiempo>=35){
-                peticion++;
                 retorno = tiempo;
                 tiempo = 85;
-                
+                //p_contador.innerHTML=`${peticion}`;
             }   
-            if(tiempo<=45 && tiempo < 35){
-                peticion--;   
-                tiempo = tiempo - 15;
+            if(tiempo<=45 && tiempo < 35){   
+                retorno=tiempo;
+                tiempo = tiempo/2;
+               // p_contador.innerHTML=`${peticion}`;
                }     
         }
         if(message.toString()=='cancelar'){
-            console.log('cancelar con mqtt')
-            if(peticion>0 && tiempo > 35){
-                peticion--;   
+            //console.log('cancelar con mqtt')
+            if(peticion>0){
+               // peticion--;   
                 tiempo = retorno;
+                //p_contador.innerHTML=`${peticion}`
+               }
+            
+            if(peticion==0 && tiempo > 35){
+                //peticion--;   
+                tiempo = retorno;
+               // p_contador.innerHTML=`${peticion}`
                }
         }
       })
@@ -69,14 +82,15 @@ pasar.addEventListener("click",()=>{
         peticion--;   
         tiempo = tiempo - 15;
        }
-})*/
+})
+
 cancelar.addEventListener("click",()=>{
     if(peticion>0 && tiempo > 35){
      peticion--;   
      tiempo = retorno;
     }
 
-})
+})*/
 
 const encender = {
     amarilla1: function encender(){
@@ -113,7 +127,7 @@ const apagar = {
 
 const semaforo=()=>{
     display.innerHTML=`${tiempo}`
-    if(tiempo > 0 || tiempo<=120){
+    if(tiempo > 0 && tiempo<=120){
         tiempo--;
 
         if(tiempo <=85){
@@ -153,5 +167,20 @@ const semaforo=()=>{
 }
 
 
+
+//envio de timer
+client.on('connect', function () {
+    setInterval(() => {
+        client.publish('rlm6301/time', `${tiempo}`)
+    }, 1000);
+        
+    
+})
+
+
 semaforo();
 setInterval(semaforo,1000);
+
+
+
+
