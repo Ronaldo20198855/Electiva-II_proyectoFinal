@@ -8,50 +8,42 @@ const cancelar = document.getElementById("cancelar");
 const respuesta = document.querySelector('.info')
 const p_contador = document.querySelector('.peatones_contador')
 
-//const client  = mqtt.connect('ws://test.mosquitto.org:8081/mqtt')
+//creacion del cliente con el broker de preferencia
 
+//const client  = mqtt.connect('ws://test.mosquitto.org:8081/mqtt')
 const client  = mqtt.connect('ws://broker.hivemq.com:8000/mqtt')
 // hivemq puerto 8000 || 443
 
+
+//declaracion de variables
 let tiempo = 85;
 let peticion = 0;
 let retorno = 0;
 
 
-//conexion 
+//optencion del peticiones de paso a travez del broker
 client.on('connect', function () {
   client.subscribe('rlm6301', function (err) {
     if (!err) {
       client.on('message',  function (topic, message) {
-      
-        //console.log(topic +"-"+ message.toString())
         if(message.toString()=='pasar'){
-            //console.log('pausa con mqtt')
-            peticion++;
-            p_contador.innerHTML=`${peticion}`;
             if(tiempo<=45 && tiempo>=35){
                 retorno = tiempo;
                 tiempo = 85;
-                //p_contador.innerHTML=`${peticion}`;
             }   
             if(tiempo<=45 && tiempo < 35){   
                 retorno=tiempo;
                 tiempo = Math.round(tiempo/2);
-               // p_contador.innerHTML=`${peticion}`;
                }     
         }
         if(message.toString()=='cancelar'){
-            //console.log('cancelar con mqtt')
             if(peticion>0){
                   
                 tiempo = retorno;
-                //p_contador.innerHTML=`${peticion}`
                }
             
-            if(peticion==0 && tiempo > 35){
-                //peticion--;   
+            if(peticion==0 && tiempo > 35){   
                 tiempo = retorno;
-               // p_contador.innerHTML=`${peticion}`
                }
         }
       })
@@ -59,6 +51,27 @@ client.on('connect', function () {
   })
 })
 
+//envio de la cantidad de peticiones al topico "rlm6001/peticion"
+client.on('connect', function () {
+    pasar.addEventListener('click', ()=>{
+        if(tiempo<=45 && tiempo>=35){
+            peticion++
+            p_contador.innerHTML=`${peticion}`
+            client.publish('rlm6301/peticion', `${peticion}`)
+        }
+    })
+})
+client.on('connect', function () {
+    pasar.addEventListener('click', ()=>{
+        if(tiempo<=45 && tiempo < 35){
+            peticion++
+            p_contador.innerHTML=`${peticion}`
+            client.publish('rlm6301/peticion', `${peticion}`)
+        }
+    })
+})
+
+//envio de peticion de "paso" al topico "rlm6301"
 
 client.on('connect', function () {
     pasar.addEventListener('click', ()=>{
@@ -71,27 +84,8 @@ client.on('connect', function () {
     })
 })
 
-/*
-pasar.addEventListener("click",()=>{   
-    if(tiempo<=45 && tiempo>=35){
-        peticion++;
-        retorno = tiempo;
-        tiempo = 85;
-    }
-    if(tiempo<=45 && tiempo < 35){
-        peticion--;   
-        tiempo = tiempo - 15;
-       }
-})
 
-cancelar.addEventListener("click",()=>{
-    if(peticion>0 && tiempo > 35){
-     peticion--;   
-     tiempo = retorno;
-    }
-
-})*/
-
+//objetos para cambiar las luces del semarofo 
 const encender = {
     amarilla1: function encender(){
         amarilla1.setAttribute("style", "background-color: #FFFF00")
@@ -124,7 +118,7 @@ const apagar = {
     }
 }
 
-
+//control de luces del semaforo
 const semaforo=()=>{
     display.innerHTML=`${tiempo}`
     if(tiempo > 0 && tiempo<=120){
@@ -168,7 +162,7 @@ const semaforo=()=>{
 
 
 
-//envio de timer
+//envio de timer al topico "rlm6301/time"
 client.on('connect', function () {
     setInterval(() => {
         client.publish('rlm6301/time', `${tiempo}`)
