@@ -8,7 +8,7 @@ const cancelar = document.getElementById("cancelar");
 const respuesta = document.querySelector('.info')
 const p_contador = document.querySelector('.peatones_contador')
 
-//const client  = mqtt.connect('ws://test.mosquitto.org:8080/mqtt')
+//const client  = mqtt.connect('ws://test.mosquitto.org:8081/mqtt')
 
 const client  = mqtt.connect('ws://broker.hivemq.com:8000/mqtt')
 // hivemq puerto 8000 || 443
@@ -23,12 +23,12 @@ client.on('connect', function () {
   client.subscribe('rlm6301', function (err) {
     if (!err) {
       client.on('message',  function (topic, message) {
-        // message is Buffer
+      
         //console.log(topic +"-"+ message.toString())
         if(message.toString()=='pasar'){
             //console.log('pausa con mqtt')
-            //peticion++;
-            //p_contador.innerHTML=`${peticion}`;
+            peticion++;
+            p_contador.innerHTML=`${peticion}`;
             if(tiempo<=45 && tiempo>=35){
                 retorno = tiempo;
                 tiempo = 85;
@@ -36,14 +36,14 @@ client.on('connect', function () {
             }   
             if(tiempo<=45 && tiempo < 35){   
                 retorno=tiempo;
-                tiempo = tiempo/2;
+                tiempo = Math.round(tiempo/2);
                // p_contador.innerHTML=`${peticion}`;
                }     
         }
         if(message.toString()=='cancelar'){
             //console.log('cancelar con mqtt')
             if(peticion>0){
-               // peticion--;   
+                  
                 tiempo = retorno;
                 //p_contador.innerHTML=`${peticion}`
                }
