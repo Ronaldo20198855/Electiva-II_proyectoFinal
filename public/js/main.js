@@ -19,7 +19,7 @@ const client  = mqtt.connect('ws://broker.hivemq.com:8000/mqtt')
 let tiempo = 85;
 let peticion = 0;
 let retorno = 0;
-
+let correct = false; 
 
 //optencion del peticiones de paso a travez del broker
 client.on('connect', function () {
@@ -30,10 +30,17 @@ client.on('connect', function () {
             if(tiempo<=45 && tiempo>=35){
                 retorno = tiempo;
                 tiempo = 85;
-            }   
+                peticion++;
+                p_contador.innerHTML=`${peticion}`
+                correct = true;           
+                client.publish('rlm6301/peticion', `${peticion}`)       
+                }
             if(tiempo<=45 && tiempo < 35){   
                 retorno=tiempo;
                 tiempo = Math.round(tiempo/2);
+                peticion++;
+                p_contador.innerHTML=`${peticion}`
+                client.publish('rlm6301/peticion', `${peticion}`)
                }     
         }
         if(message.toString()=='cancelar'){
@@ -49,26 +56,6 @@ client.on('connect', function () {
       })
     }
   })
-})
-
-//envio de la cantidad de peticiones al topico "rlm6001/peticion"
-client.on('connect', function () {
-    pasar.addEventListener('click', ()=>{
-        if(tiempo<=45 && tiempo>=35){
-            peticion++
-            p_contador.innerHTML=`${peticion}`
-            client.publish('rlm6301/peticion', `${peticion}`)
-        }
-    })
-})
-client.on('connect', function () {
-    pasar.addEventListener('click', ()=>{
-        if(tiempo<=45 && tiempo < 35){
-            peticion++
-            p_contador.innerHTML=`${peticion}`
-            client.publish('rlm6301/peticion', `${peticion}`)
-        }
-    })
 })
 
 //envio de peticion de "paso" al topico "rlm6301"
