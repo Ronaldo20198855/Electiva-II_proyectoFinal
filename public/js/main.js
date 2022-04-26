@@ -10,7 +10,7 @@ const p_contador = document.querySelector('.peatones_contador')
 
 //creacion del cliente con el broker de preferencia
 
-//const client  = mqtt.connect('ws://test.mosquitto.org:8081/mqtt')
+//const client  = mqtt.connect('ws://broker.emqx.io:8083/mqtt')
 const client  = mqtt.connect('ws://broker.hivemq.com:8000/mqtt')
 // hivemq puerto 8000 || 443
 
@@ -19,7 +19,7 @@ const client  = mqtt.connect('ws://broker.hivemq.com:8000/mqtt')
 let tiempo = 85;
 let peticion = 0;
 let retorno = 0;
-let correct = false; 
+
 
 //optencion del peticiones de paso a travez del broker
 client.on('connect', function () {
@@ -31,8 +31,7 @@ client.on('connect', function () {
                 retorno = tiempo;
                 tiempo = 85;
                 peticion++;
-                p_contador.innerHTML=`${peticion}`
-                correct = true;           
+                p_contador.innerHTML=`${peticion}`          
                 client.publish('rlm6301/peticion', `${peticion}`)       
                 }
             if(tiempo<=45 && tiempo < 35){   
@@ -44,11 +43,9 @@ client.on('connect', function () {
                }     
         }
         if(message.toString()=='cancelar'){
-            if(peticion>0){
-                  
+            if(peticion>0){      
                 tiempo = retorno;
-               }
-            
+               }  
             if(peticion==0 && tiempo > 35){   
                 tiempo = retorno;
                }
