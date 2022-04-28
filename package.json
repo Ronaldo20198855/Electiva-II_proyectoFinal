@@ -1,0 +1,23 @@
+{
+  "name": "proyecto_final_prueba-1",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ronaldo20198855/Electiva-II_proyectoFinal.git"
+  },
+  "author": "Ronaldo Lantigua M. - Gaddiel Comas S.",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Ronaldo20198855/Electiva-II_proyectoFinal/issues"
+  },
+  "homepage": "https://github.com/Ronaldo20198855/Electiva-II_proyectoFinal#readme",
+  "dependencies": {
+    "mongodb": "^4.5.0",
+    "mqtt": "^4.3.7"
+  }
+}
